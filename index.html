@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实验流程</title>
+<style>
+  :root{
+    --bg1:#eef2fb; --bg2:#f6f0fb;
+    --card:#ffffff;
+    --ink:#20232b; --muted:#8a90a0; --line:#eceef4;
+    --accent:#5b6ef5; --accent2:#8a7bf0;
+    --p1:#2f6fed; --p1bg:#e9f0ff;
+    --p2:#7a4fe0; --p2bg:#f1ebff;
+    --p0:#5a6072; --p0bg:#eef0f4;
+    --box:#f7f8fc;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink); line-height:1.75;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, var(--bg2), transparent 60%),
+      radial-gradient(1000px 500px at 110% 0%, var(--bg1), transparent 55%),
+      #f3f5fb;
+    min-height:100%;
+    padding:28px 16px 90px;
+  }
+  .wrap{max-width:680px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:22px;}
+  header h1{
+    font-size:22px;font-weight:800;letter-spacing:.5px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header .sub{font-size:13px;color:var(--muted);margin-top:6px;}
+
+  .progress{margin:18px 4px 0;}
+  .progress-bar{height:9px;background:#e6e9f2;border-radius:999px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;border-radius:999px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    transition:width .4s cubic-bezier(.4,0,.2,1);}
+  .progress-text{font-size:12px;color:var(--muted);text-align:right;margin-top:6px;}
+
+  .card{
+    background:var(--card);border-radius:20px;padding:28px 26px;
+    box-shadow:0 10px 40px rgba(60,70,120,.10), 0 2px 8px rgba(60,70,120,.05);
+    border:1px solid rgba(255,255,255,.6);
+    animation:pop .35s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.99);}to{opacity:1;transform:none;}}
+
+  .phase-tag{display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;margin-bottom:14px;}
+  .phase-tag .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .phase-1{background:var(--p1bg);color:var(--p1);}
+  .phase-2{background:var(--p2bg);color:var(--p2);}
+  .phase-0{background:var(--p0bg);color:var(--p0);}
+
+  .step-kind{font-size:13px;color:var(--accent);font-weight:700;margin-bottom:3px;}
+  .step-title{font-size:19px;font-weight:800;margin-bottom:16px;}
+
+  .content-box{
+    background:var(--box);border:1px solid var(--line);border-radius:14px;
+    padding:18px;font-size:15.5px;white-space:pre-wrap;word-break:break-word;
+    max-height:44vh;overflow-y:auto;color:#2c3040;
+  }
+  .content-box.link{font-family:ui-monospace,Menlo,monospace;color:var(--p1);
+    font-size:15px;word-break:break-all;}
+
+  .note{margin-top:14px;font-size:13.5px;color:#8a6d00;
+    background:#fff8e4;border-left:4px solid #f2c14e;
+    padding:11px 14px;border-radius:0 8px 8px 0;}
+
+  .btns{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;}
+  button{border:none;border-radius:13px;padding:15px 16px;font-size:15px;
+    font-weight:700;cursor:pointer;transition:transform .08s,box-shadow .2s,background .2s;
+    font-family:inherit;}
+  button:active{transform:scale(.96);}
+  .btn-copy{flex:1;min-width:120px;background:#eef1f9;color:#3a3f50;}
+  .btn-copy:hover{background:#e4e9f7;}
+  .btn-copy.done{background:#d8f6e0;color:#128a3c;}
+  .btn-open{flex:1;min-width:120px;background:#eaf1ff;color:var(--p1);}
+  .btn-open:hover{background:#dde9ff;}
+  .btn-next{flex:1.4;min-width:140px;color:#fff;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    box-shadow:0 6px 18px rgba(91,110,245,.35);}
+  .btn-next:hover{box-shadow:0 8px 22px rgba(91,110,245,.45);}
+  .btn-next:disabled{background:#c9cdda;color:#fff;box-shadow:none;cursor:not-allowed;}
+  .lock-hint{margin-top:12px;font-size:12.5px;color:var(--muted);text-align:center;}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding:0 4px;}
+  .nav button{background:transparent;color:var(--muted);font-weight:600;
+    padding:6px 8px;font-size:13px;border-radius:8px;}
+  .nav button:hover{background:rgba(0,0,0,.04);}
+  .nav button:disabled{opacity:.3;cursor:default;background:transparent;}
+
+  .done-screen{text-align:center;padding:44px 20px;}
+  .done-screen .emoji{font-size:52px;}
+  .done-screen h2{margin:16px 0 10px;font-size:22px;}
+  .done-screen p{color:var(--muted);font-size:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>实验流程</h1>
+    <div class="sub">请按顺序完成每一步 · 完成后点「下一步」</div>
+    <div class="progress">
+      <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+      <div class="progress-text" id="ptext"></div>
+    </div>
+  </header>
+
+  <div id="app"></div>
+
+  <div class="nav">
+    <button id="prev" onclick="go(-1)">← 上一步</button>
+    <button id="jump" onclick="jumpMenu()">跳转 ▾</button>
+  </div>
+</div>
+
+<script>
+// phase: "0"=准备/过渡, "1"=第一部分, "2"=第二部分  （不含任何实验条件信息）
+const steps = [
+  { phase:"0", label:"准备", kind:"基本信息问卷", title:"填写基本信息问卷", type:"link",
+    content:"https://v.wjx.cn/vm/eYvr0r1.aspx#" },
+
+  // ========== 第一部分 ==========
+  { phase:"1", label:"第一部分", kind:"进入系统", title:"打开第一个系统", type:"link",
+    content:"https://www.coze.cn/store/agent/7662250096855171081?bot_id=true",
+    note:"开始新任务时请点击「新增对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。" },
+  { phase:"1", label:"第一部分", kind:"情景设定", title:"情景设定", type:"task",
+    content:"情景设定：\n你是一名正在心血管内科轮转的临床实习医生，需要完成一次标准化临床能力考核。导师要求你在正式考核前，系统梳理 射血分数降低型心力衰竭（HFrEF）的诊断、治疗与随访逻辑。\n考核将重点关注：\n1. 基本概念理解是否准确\n2. 是否能在具体病例中正确应用诊断和治疗策略\n3. 是否具备在复杂治疗中进行长期管理与风险预判的意识\n请你按照下面三个阶段的任务要求，与 AI 进行充分交流，为考核做准备。" },
+
+  { phase:"1", label:"第一部分", kind:"任务一 · 前测", title:"前测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/Q00mjXY.aspx#" },
+  { phase:"1", label:"第一部分", kind:"任务一 · 题目", title:"任务一", type:"task",
+    content:"在本任务中，请你通过与 AI 的对话，对射血分数降低型心力衰竭这一疾病进行系统性的理解与梳理。你需要明确 HFrEF 在医学上的定义标准，理解临床上通常依据哪些指标以及如何对其进行界定，并把握 HFrEF 治疗在长期层面的总体目标。进一步，请围绕当前的“新四联基石治疗”展开分析，理解该治疗策略包含的四大类药物，这四大类药物分别具体包括哪些代表性药物，各自在改善心衰预后中的主要疗效及可能带来的副作用，以及在实际临床中它们通常如何进行联合使用。最后，梳理临床中常用来评估病情变化和预后的关键监测指标，并理解这些指标在随访与风险判断中的意义。",
+    note:"开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。" },
+  { phase:"1", label:"第一部分", kind:"任务一 · 后测", title:"后测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/wE0M8vA.aspx#", note:"作答时不能再向 AI 提问，但可以查看之前的对话记录。" },
+
+  { phase:"1", label:"第一部分", kind:"任务二 · 前测", title:"前测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/YjgvAUX.aspx#" },
+  { phase:"1", label:"第一部分", kind:"任务二 · 题目", title:"任务二", type:"task",
+    content:"在本任务中，请你设想一名已确诊射血分数降低型心力衰竭（HFrEF）患者的实际临床工作场景，并在与 AI 的对话中完成综合判断。你需要分析不同类别心衰药物在治疗中分别解决哪些核心问题，明确患者在服用这些药物时应注意的关键事项以及通常需要进行的定期检查，同时识别哪些药物可能对心衰药物治疗效果产生负面影响，包括不宜与心衰治疗药物共同使用的药物类型。在具体用药决策层面，请进一步判断在什么情况下更倾向于选择 ARNI，并解释从 ACEI 转换为 ARNI 时为什么需要设置间隔期；同时，结合临床原则说明 β 受体阻滞剂为何需要小剂量起始并缓慢加量，以及在出现哪些情形时需要暂缓或调整 β 受体阻滞剂的使用。最后，请综合患者的症状与体征变化进行判断，思考当患者症状出现好转时应如何调整整体用药方案，以及药物剂量调整通常应遵循的基本原则。",
+    note:"开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。" },
+  { phase:"1", label:"第一部分", kind:"任务二 · 后测", title:"后测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/mBQzRq2.aspx#", note:"作答时不能再向 AI 提问，但可以查看之前的对话记录。" },
+
+  { phase:"1", label:"第一部分", kind:"任务三 · 前测", title:"前测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/YN6BJvA.aspx#" },
+  { phase:"1", label:"第一部分", kind:"任务三 · 题目", title:"任务三", type:"task",
+    content:"在本任务中，请你在 AI 的辅助下，对一名 HFrEF 患者的后续治疗过程进行综合性思考。假设患者在接受规范药物治疗一段时间后，病情控制仍不理想，例如心率依然偏快或心功能持续较差，请你判断此时有哪些合理的治疗升级选择，并说明相关决策通常依据哪些临床因素。在此基础上，请进一步思考在什么条件下需要开始评估 ICD 等器械治疗。随后，请结合长期随访视角，分析 NT-proBNP 等生物标志物的动态变化在预后判断中的意义，并讨论当相关指标出现下降但患者主观症状改善并不明显时，应如何进行理解和解释。最后，请从整体治疗策略的角度进行反思，说明为什么在 HFrEF 的诊疗中，“规范、长期的综合管理”尤为重要。",
+    note:"开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。" },
+  { phase:"1", label:"第一部分", kind:"任务三 · 后测", title:"后测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/OBpmNeX.aspx#", note:"作答时不能再向 AI 提问，但可以查看之前的对话记录。" },
+
+  // ========== 过渡 ==========
+  { phase:"0", label:"过渡", kind:"进入下一部分", title:"进入第二部分", type:"task",
+    content:"第一部分已经完成。接下来你将进入第二个系统，整体流程与刚才相同。请继续像刚才一样，自然地完成任务即可。" },
+
+  // ========== 第二部分 ==========
+  { phase:"2", label:"第二部分", kind:"进入系统", title:"打开第二个系统", type:"link",
+    content:"https://www.coze.cn/store/agent/7662259081499361286?bot_id=true",
+    note:"开始新任务时请点击「新增对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。" },
+  { phase:"2", label:"第二部分", kind:"情景设定", title:"情景设定", type:"task",
+    content:"情景设定：\n你是一名正在血液科轮转的临床实习医生，需要完成一次标准化临床能力考核。导师要求你在正式考核前，系统梳理 再生障碍性贫血（Aplastic Anemia, AA）的诊断、治疗与随访逻辑。\n考核将重点关注：\n1. 基本概念理解是否准确\n2. 是否能在具体病例中正确应用诊断和治疗策略\n3. 是否具备在复杂治疗中进行长期管理与风险预判的意识\n请你按照下面三个阶段的任务要求，与 AI 进行充分交流，为考核做准备。" },
+
+  { phase:"2", label:"第二部分", kind:"任务一 · 前测", title:"前测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/YY0kvAU.aspx#" },
+  { phase:"2", label:"第二部分", kind:"任务一 · 题目", title:"任务一", type:"task",
+    content:"在本任务中，请你通过与 AI 的对话，对再生障碍性贫血这一疾病进行系统性的理解与梳理。你需要明确这是一种怎样的血液系统疾病，其发生发展的核心病理基础是什么；同时理解临床上是依据哪些血液学指标来判断“重型”再生障碍性贫血，其中哪一项指标与感染风险和死亡风险最为直接相关。在此基础上，请进一步分析在缺乏合适造血干细胞供者的情况下，推荐的首选一线治疗总体策略，这一策略通常涉及哪些核心药物类别及其基本使用方式，以及近年来在该领域出现的新型治疗药物。此外，你还需要理解该疾病发生的根本原因，并认识到如果未能接受规范治疗，患者在自然病程中可能出现的严重临床后果。",
+    note:"开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。" },
+  { phase:"2", label:"第二部分", kind:"任务一 · 后测", title:"后测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/OmauNeA.aspx#", note:"作答时不能再向 AI 提问，但可以查看之前的对话记录。" },
+
+  { phase:"2", label:"第二部分", kind:"任务二 · 前测", title:"前测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/hgdvsVu.aspx#" },
+  { phase:"2", label:"第二部分", kind:"任务二 · 题目", title:"任务二", type:"task",
+    content:"在本任务中，请你设想自己处于实际的临床工作情境，需要在既定诊断明确的前提下，对再生障碍性贫血患者的治疗方案进行深入分析。你需要通过与 AI 的对话，理解联合治疗在该疾病中的整体逻辑，包括不同药物在治疗过程中分别承担的作用及其基本使用方式，认识到为何治疗不能仅依赖单一药物完成，并明确这类治疗在临床上的常见治疗周期。在此基础上，请进一步关注关键药物的使用情况，重点理解 ATG、环孢素和艾曲泊帕在治疗中的核心作用，以及患者在用药期间需要特别注意的事项。同时，你还需要认识免疫抑制治疗过程中医生最为警惕的潜在并发症，并理解为什么在整个治疗过程中需要定期检查口腔情况、血象以及肝肾功能，以保障治疗的安全性和有效性。",
+    note:"开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。" },
+  { phase:"2", label:"第二部分", kind:"任务二 · 后测", title:"后测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/mKRq0RU.aspx#", note:"作答时不能再向 AI 提问，但可以查看之前的对话记录。" },
+
+  { phase:"2", label:"第二部分", kind:"任务三 · 前测", title:"前测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/tw7Mr02.aspx#" },
+  { phase:"2", label:"第二部分", kind:"任务三 · 题目", title:"任务三", type:"task",
+    content:"在本任务中，请你在 AI 的辅助下，对再生障碍性贫血治疗过程进行综合性思考。你需要理解在治疗过程中一旦出现药物相关副作用，临床上通常应如何应对，并认识到擅自停药或快速减量可能带来的风险以及延误治疗可能带来的不良后果。同时，请结合免疫抑制治疗的背景，分析患者在感染和发热方面所面临的风险，并理解在为老年人、孕妇等特殊人群制定治疗方案时需要额外注意的因素。在此基础上，请进一步关注疗效评估与随访管理，理解医生通常依据哪些标准判断治疗是否有效，并明确即使血象已经改善，患者仍然需要长期随访的原因，最后能够识别哪些变化可能提示疾病复发。",
+    note:"开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。" },
+  { phase:"2", label:"第二部分", kind:"任务三 · 后测", title:"后测问卷", type:"link",
+    content:"https://ks.wjx.com/vm/PvRDrfe.aspx#", note:"作答时不能再向 AI 提问，但可以查看之前的对话记录。" },
+];
+
+let i = 0;
+const completed = {};   // 记录每一步是否已完成（点过复制/打开）
+const app = document.getElementById('app');
+const fill = document.getElementById('fill');
+const ptext = document.getElementById('ptext');
+
+function render(){
+  if(i >= steps.length){ renderDone(); return; }
+  const s = steps[i];
+  fill.style.width = (i/steps.length*100) + "%";
+  ptext.textContent = `第 ${i+1} / ${steps.length} 步`;
+  const isLink = s.type === "link";
+  const done = !!completed[i];
+  const nextHint = isLink ? "请先点「打开」查看本步内容，才能进入下一步" : "请先点「复制」，才能进入下一步";
+  app.innerHTML = `
+    <div class="card" id="card">
+      <span class="phase-tag phase-${s.phase}"><span class="dot"></span>${s.label}</span>
+      <div class="step-kind">${escapeHtml(s.kind)}</div>
+      <div class="step-title">${escapeHtml(s.title)}</div>
+      <div class="content-box ${isLink?'link':''}">${escapeHtml(s.content)}</div>
+      ${s.note ? `<div class="note">💡 ${escapeHtml(s.note)}</div>` : ``}
+      <div class="btns">
+        <button class="btn-copy" id="copyBtn" onclick="copyNow()">📋 复制</button>
+        ${isLink ? `<button class="btn-open" onclick="openLink()">🔗 打开</button>` : ``}
+        <button class="btn-next" id="nextBtn" onclick="go(1)" ${done?'':'disabled'}>下一步 →</button>
+      </div>
+      ${done ? `` : `<div class="lock-hint">🔒 ${nextHint}</div>`}
+    </div>`;
+  document.getElementById('prev').disabled = (i === 0);
+}
+
+function unlockNext(){
+  completed[i] = true;
+  const btn = document.getElementById('nextBtn');
+  if(btn) btn.disabled = false;
+  const hint = document.querySelector('.lock-hint');
+  if(hint) hint.remove();
+}
+
+function renderDone(){
+  fill.style.width = "100%";
+  ptext.textContent = `全部 ${steps.length} 步已完成`;
+  app.innerHTML = `
+    <div class="card done-screen">
+      <div class="emoji">🎉</div>
+      <h2>全部完成</h2>
+      <p>感谢你的参与！请等待实验员进行后续说明。</p>
+      <div class="btns"><button class="btn-next" onclick="i=0;render()">← 回到开头</button></div>
+    </div>`;
+  document.getElementById('prev').disabled = false;
+}
+
+function go(d){ i += d; if(i<0) i=0; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function copyNow(){
+  const text = steps[i].content;
+  const done = ()=>{ unlockNext(); const b=document.getElementById('copyBtn'); b.textContent="✅ 已复制"; b.classList.add('done');
+    setTimeout(()=>{b.textContent="📋 复制";b.classList.remove('done');},1500); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
+  function fallback(){ const ta=document.createElement('textarea'); ta.value=text;
+    document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); done(); }
+}
+
+function openLink(){ unlockNext(); window.open(steps[i].content,'_blank'); }
+
+function jumpMenu(){
+  const list = steps.map((s,idx)=>`${idx+1}. ${s.label} · ${s.kind}`).join("\n");
+  const ans = prompt("跳转到第几步？（1-"+steps.length+"）\n\n"+list, i+1);
+  if(ans===null) return;
+  const n = parseInt(ans,10);
+  if(!isNaN(n)&&n>=1&&n<=steps.length){ i=n-1; render(); }
+}
+
+function escapeHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+render();
+</script>
+</body>
+</html>
