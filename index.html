@@ -69,6 +69,9 @@
   }
   .content-box.link{font-family:ui-monospace,Menlo,monospace;color:var(--p1);
     font-size:15px;word-break:break-all;}
+  .content-box .kw{font-weight:800;color:#1f2430;
+    background:linear-gradient(180deg,transparent 62%,#ffe9a8 62%);
+    padding:0 1px;border-radius:2px;}
 
   .note{margin-top:14px;font-size:13.5px;color:#8a6d00;
     background:#fff8e4;border-left:4px solid #f2c14e;
@@ -148,19 +151,21 @@
 
 const SURVEY = "https://v.wjx.cn/vm/eYvr0r1.aspx#";
 
-// N = 无提示版；H = 有提示版（回答后可能给参考思路）
+// 本地对话系统地址：从本地服务器打开时用相对路径，从 GitHub Pages 打开时指向本机 8000 端口
+const CHAT_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+  ? "" : "http://localhost:8000";
+
+// N = 无提示版（对照）；H = 有提示版（元认知，回答后可能给参考思路）
 const SYSTEMS = {
   N: {
-    link: "https://www.coze.cn/store/agent/7662250096855171081?bot_id=true",
-    note: "开始新任务时请点击「新增对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。"
+    note: "开始新任务时请点击右上角「＋ 新对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。"
   },
   H: {
-    link: "https://www.coze.cn/store/agent/7662259081499361286?bot_id=true",
-    note: "本系统在回答后可能会提供一些参考思路或提示，你可以自行决定是否采纳。开始新任务时请点击「新增对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。"
+    note: "本系统在回答后可能会提供一些参考思路或提示，你可以自行决定是否采纳。开始新任务时请点击右上角「＋ 新对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。"
   }
 };
 
-const TASK_NOTE = "开始新任务时请点击「新增对话」按钮；完成对话后，请在对话框输入「我的提问结束」。";
+const TASK_NOTE = "开始新任务时请点击右上角「＋ 新对话」按钮；完成对话后，请在对话框输入「我的提问结束」。";
 const POST_NOTE = "作答时不能再向 AI 提问，但可以查看之前的对话记录。";
 
 const SCENARIOS = {
@@ -170,12 +175,15 @@ const SCENARIOS = {
     tasks: [
       { pre:"https://ks.wjx.com/vm/YY0kvAU.aspx#",
         text:"在本任务中，请你通过与 AI 的对话，对再生障碍性贫血这一疾病进行系统性的理解与梳理。你需要明确这是一种怎样的血液系统疾病，其发生发展的核心病理基础是什么；同时理解临床上是依据哪些血液学指标来判断“重型”再生障碍性贫血，其中哪一项指标与感染风险和死亡风险最为直接相关。在此基础上，请进一步分析在缺乏合适造血干细胞供者的情况下，推荐的首选一线治疗总体策略，这一策略通常涉及哪些核心药物类别及其基本使用方式，以及近年来在该领域出现的新型治疗药物。此外，你还需要理解该疾病发生的根本原因，并认识到如果未能接受规范治疗，患者在自然病程中可能出现的严重临床后果。",
+        keywords:["一种怎样的血液系统疾病","核心病理基础","血液学指标","重型","感染风险和死亡风险","一线治疗总体策略","核心药物类别","基本使用方式","新型治疗药物","根本原因","未能接受规范治疗"],
         post:"https://ks.wjx.com/vm/OmauNeA.aspx#" },
       { pre:"https://ks.wjx.com/vm/hgdvsVu.aspx#",
         text:"在本任务中，请你设想自己处于实际的临床工作情境，需要在既定诊断明确的前提下，对再生障碍性贫血患者的治疗方案进行深入分析。你需要通过与 AI 的对话，理解联合治疗在该疾病中的整体逻辑，包括不同药物在治疗过程中分别承担的作用及其基本使用方式，认识到为何治疗不能仅依赖单一药物完成，并明确这类治疗在临床上的常见治疗周期。在此基础上，请进一步关注关键药物的使用情况，重点理解 ATG、环孢素和艾曲泊帕在治疗中的核心作用，以及患者在用药期间需要特别注意的事项。同时，你还需要认识免疫抑制治疗过程中医生最为警惕的潜在并发症，并理解为什么在整个治疗过程中需要定期检查口腔情况、血象以及肝肾功能，以保障治疗的安全性和有效性。",
+        keywords:["联合治疗","作用及其基本使用方式","常见治疗周期","ATG、环孢素和艾曲泊帕","免疫抑制治疗","潜在并发症","定期检查口腔情况、血象以及肝肾功能"],
         post:"https://ks.wjx.com/vm/mKRq0RU.aspx#" },
       { pre:"https://ks.wjx.com/vm/tw7Mr02.aspx#",
         text:"在本任务中，请你在 AI 的辅助下，对再生障碍性贫血治疗过程进行综合性思考。你需要理解在治疗过程中一旦出现药物相关副作用，临床上通常应如何应对，并认识到擅自停药或快速减量可能带来的风险以及延误治疗可能带来的不良后果。同时，请结合免疫抑制治疗的背景，分析患者在感染和发热方面所面临的风险，并理解在为老年人、孕妇等特殊人群制定治疗方案时需要额外注意的因素。在此基础上，请进一步关注疗效评估与随访管理，理解医生通常依据哪些标准判断治疗是否有效，并明确即使血象已经改善，患者仍然需要长期随访的原因，最后能够识别哪些变化可能提示疾病复发。",
+        keywords:["相关副作用","擅自停药或快速减量","延误治疗可能带来的不良后果","感染和发热","老年人、孕妇等特殊人群","血象","长期随访","疾病复发"],
         post:"https://ks.wjx.com/vm/PvRDrfe.aspx#" }
     ]
   },
@@ -185,12 +193,15 @@ const SCENARIOS = {
     tasks: [
       { pre:"https://ks.wjx.com/vm/Q00mjXY.aspx#",
         text:"在本任务中，请你通过与 AI 的对话，对射血分数降低型心力衰竭这一疾病进行系统性的理解与梳理。你需要明确 HFrEF 在医学上的定义标准，理解临床上通常依据哪些指标以及如何对其进行界定，并把握 HFrEF 治疗在长期层面的总体目标。进一步，请围绕当前的“新四联基石治疗”展开分析，理解该治疗策略包含的四大类药物，这四大类药物分别具体包括哪些代表性药物，各自在改善心衰预后中的主要疗效及可能带来的副作用，以及在实际临床中它们通常如何进行联合使用。最后，梳理临床中常用来评估病情变化和预后的关键监测指标，并理解这些指标在随访与风险判断中的意义。",
+        keywords:["定义标准","指标","总体目标","新四联基石治疗","四大类药物","主要疗效","副作用","联合使用","关键监测指标"],
         post:"https://ks.wjx.com/vm/wE0M8vA.aspx#" },
       { pre:"https://ks.wjx.com/vm/YjgvAUX.aspx#",
         text:"在本任务中，请你设想一名已确诊射血分数降低型心力衰竭（HFrEF）患者的实际临床工作场景，并在与 AI 的对话中完成综合判断。你需要分析不同类别心衰药物在治疗中分别解决哪些核心问题，明确患者在服用这些药物时应注意的关键事项以及通常需要进行的定期检查，同时识别哪些药物可能对心衰药物治疗效果产生负面影响，包括不宜与心衰治疗药物共同使用的药物类型。在具体用药决策层面，请进一步判断在什么情况下更倾向于选择 ARNI，并解释从 ACEI 转换为 ARNI 时为什么需要设置间隔期；同时，结合临床原则说明 β 受体阻滞剂为何需要小剂量起始并缓慢加量，以及在出现哪些情形时需要暂缓或调整 β 受体阻滞剂的使用。最后，请综合患者的症状与体征变化进行判断，思考当患者症状出现好转时应如何调整整体用药方案，以及药物剂量调整通常应遵循的基本原则。",
+        keywords:["核心问题","关键事项","定期检查","负面影响","ARNI","β 受体阻滞剂"],
         post:"https://ks.wjx.com/vm/mBQzRq2.aspx#" },
       { pre:"https://ks.wjx.com/vm/YN6BJvA.aspx#",
         text:"在本任务中，请你在 AI 的辅助下，对一名 HFrEF 患者的后续治疗过程进行综合性思考。假设患者在接受规范药物治疗一段时间后，病情控制仍不理想，例如心率依然偏快或心功能持续较差，请你判断此时有哪些合理的治疗升级选择，并说明相关决策通常依据哪些临床因素。在此基础上，请进一步思考在什么条件下需要开始评估 ICD 等器械治疗。随后，请结合长期随访视角，分析 NT-proBNP 等生物标志物的动态变化在预后判断中的意义，并讨论当相关指标出现下降但患者主观症状改善并不明显时，应如何进行理解和解释。最后，请从整体治疗策略的角度进行反思，说明为什么在 HFrEF 的诊疗中，“规范、长期的综合管理”尤为重要。",
+        keywords:["病情控制仍不理想","临床因素","ICD 等器械治疗","NT-proBNP 等生物标志物"],
         post:"https://ks.wjx.com/vm/OBpmNeX.aspx#" }
     ]
   }
@@ -228,16 +239,16 @@ function buildSteps(g){
 
     steps.push({ phase, label, kind:"进入系统",
       title: part === 0 ? "打开第一个系统" : "打开第二个系统",
-      type:"link", content:sys.link, note:sys.note });
+      type:"link", content:`${CHAT_BASE}/chat?g=${g}&part=${part+1}`, note:sys.note });
 
     steps.push({ phase, label, kind:"情景设定", title:"情景设定",
-      type:"task", content:scn.setting });
+      type:"task", content:scn.setting, optional:true });
 
     scn.tasks.forEach((t,ti)=>{
       steps.push({ phase, label, kind:`任务${cn[ti]} · 前测`, title:"前测问卷",
         type:"link", content:t.pre });
       steps.push({ phase, label, kind:`任务${cn[ti]} · 题目`, title:`任务${cn[ti]}`,
-        type:"task", content:t.text, note:TASK_NOTE });
+        type:"task", content:t.text, note:TASK_NOTE, keywords:t.keywords });
       steps.push({ phase, label, kind:`任务${cn[ti]} · 后测`, title:"后测问卷",
         type:"link", content:t.post, note:POST_NOTE });
     });
@@ -317,16 +328,17 @@ function render(){
   ptext.textContent = `第 ${i+1} / ${steps.length} 步`;
   const isLink = s.type === "link";
   const isSave = s.type === "save";
-  const done = !!completed[i];
+  const done = !!completed[i] || !!s.optional;   // optional 步骤无需操作即可进入下一步
   const nextHint = isSave ? "请先点「我已保存对话」，才能进入下一步"
                  : isLink ? "请先点「打开」查看本步内容，才能进入下一步"
                  : "请先点「复制」，才能进入下一步";
+  const contentHtml = (s.keywords && s.keywords.length) ? boldify(s.content, s.keywords) : escapeHtml(s.content);
   app.innerHTML = `
     <div class="card" id="card">
       <span class="phase-tag phase-${s.phase}"><span class="dot"></span>${s.label}</span>
       <div class="step-kind">${escapeHtml(s.kind)}</div>
       <div class="step-title">${escapeHtml(s.title)}</div>
-      <div class="content-box ${isLink?'link':''}">${escapeHtml(s.content)}</div>
+      <div class="content-box ${isLink?'link':''}">${contentHtml}</div>
       ${s.note ? `<div class="note">💡 ${escapeHtml(s.note)}</div>` : ``}
       <div class="btns">
         ${isSave
@@ -338,6 +350,29 @@ function render(){
       ${done ? `` : `<div class="lock-hint">🔒 ${nextHint}</div>`}
     </div>`;
   document.getElementById('prev').disabled = (i === 0);
+}
+
+/* 把任务里标粗的知识点用 <b> 高亮（每个短语只标首次出现，长的优先，避免重叠） */
+function boldify(text, phrases){
+  const ranges = [];
+  phrases.slice().sort((a,b)=>b.length-a.length).forEach(ph=>{
+    let idx = text.indexOf(ph);
+    while(idx !== -1){
+      if(!ranges.some(r=> idx < r.end && idx+ph.length > r.start)){
+        ranges.push({start:idx, end:idx+ph.length}); break;
+      }
+      idx = text.indexOf(ph, idx+1);
+    }
+  });
+  ranges.sort((a,b)=>a.start-b.start);
+  let out='', pos=0;
+  ranges.forEach(r=>{
+    out += escapeHtml(text.slice(pos, r.start));
+    out += '<b class="kw">' + escapeHtml(text.slice(r.start, r.end)) + '</b>';
+    pos = r.end;
+  });
+  out += escapeHtml(text.slice(pos));
+  return out;
 }
 
 function unlockNext(){
