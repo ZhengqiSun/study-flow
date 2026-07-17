@@ -151,9 +151,9 @@
 
 const SURVEY = "https://v.wjx.cn/vm/eYvr0r1.aspx#";
 
-// 本地对话系统地址：从本地服务器打开时用相对路径，从 GitHub Pages 打开时指向本机 8000 端口
+// 本地开发使用相对路径，GitHub Pages 使用 Render 云端后端。
 const CHAT_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
-  ? "" : "http://localhost:8000";
+  ? "" : "https://study-flow-backend-zn6o.onrender.com";
 
 // N = 无提示版（对照）；H = 有提示版（元认知，回答后可能给参考思路）
 const SYSTEMS = {
