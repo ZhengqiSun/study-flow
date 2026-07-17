@@ -166,7 +166,7 @@ const steps = [
   // ========== 第二部分 ==========
   { phase:"2", label:"第二部分", kind:"进入系统", title:"打开第二个系统", type:"link",
     content:"https://www.coze.cn/store/agent/7662259081499361286?bot_id=true",
-    note:"开始新任务时请点击「新增对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。" },
+    note:"本系统在回答后可能会提供一些参考思路或提示，你可以自行决定是否采纳。开始新任务时请点击「新增对话」按钮；每次与 AI 对话结束后，请在对话框输入「我的提问结束」。" },
   { phase:"2", label:"第二部分", kind:"情景设定", title:"情景设定", type:"task",
     content:"情景设定：\n你是一名正在血液科轮转的临床实习医生，需要完成一次标准化临床能力考核。导师要求你在正式考核前，系统梳理 再生障碍性贫血（Aplastic Anemia, AA）的诊断、治疗与随访逻辑。\n考核将重点关注：\n1. 基本概念理解是否准确\n2. 是否能在具体病例中正确应用诊断和治疗策略\n3. 是否具备在复杂治疗中进行长期管理与风险预判的意识\n请你按照下面三个阶段的任务要求，与 AI 进行充分交流，为考核做准备。" },
 
@@ -240,8 +240,11 @@ function renderDone(){
   app.innerHTML = `
     <div class="card done-screen">
       <div class="emoji">🎉</div>
-      <h2>全部完成</h2>
-      <p>感谢你的参与！请等待实验员进行后续说明。</p>
+      <h2>全部任务已完成</h2>
+      <p>非常感谢你的时间与配合！<br>
+      你已顺利完成本次实验的全部任务。<br>
+      接下来实验员可能会与你进行一个简短的交流，<br>了解你在使用过程中的整体感受，没有标准答案，<br>请根据真实体验自由表达即可。<br><br>
+      如果你之后对实验有任何疑问，也欢迎随时联系我们。<br>再次感谢你的参与！🌸</p>
       <div class="btns"><button class="btn-next" onclick="i=0;render()">← 回到开头</button></div>
     </div>`;
   document.getElementById('prev').disabled = false;
