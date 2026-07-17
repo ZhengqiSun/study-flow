@@ -84,6 +84,9 @@
   .btn-copy.done{background:#d8f6e0;color:#128a3c;}
   .btn-open{flex:1;min-width:120px;background:#eaf1ff;color:var(--p1);}
   .btn-open:hover{background:#dde9ff;}
+  .btn-ack{flex:1;min-width:150px;background:#eaf7ee;color:#128a3c;}
+  .btn-ack:hover{background:#dcf2e3;}
+  .btn-ack.done{background:#d8f6e0;color:#128a3c;}
   .btn-next{flex:1.4;min-width:140px;color:#fff;
     background:linear-gradient(90deg,var(--accent),var(--accent2));
     box-shadow:0 6px 18px rgba(91,110,245,.35);}
@@ -238,6 +241,14 @@ function buildSteps(g){
       steps.push({ phase, label, kind:`任务${cn[ti]} · 后测`, title:"后测问卷",
         type:"link", content:t.post, note:POST_NOTE });
     });
+
+    steps.push({ phase, label, kind:"保存对话记录",
+      title: part === 0 ? "保存第一部分对话" : "保存第二部分对话",
+      type:"save",
+      content: part === 0
+        ? "本部分（情境一）的三个子任务已全部完成。\n在进入下一部分之前，请先完整保存你与 AI 的对话记录：\n\n方式一：翻到对话最开始处 →在页面点右键 →「另存为」→ 保存为「网页(.html)」。\n方式二：在对话区域按 Ctrl+A 全选 → Ctrl+C 复制 → 粘贴到 Word 文档中。\n\n请确认对话已完整保存后，再点击「我已保存对话」。"
+        : "本部分（情境二）的三个子任务已全部完成。\n请同样完整保存你与 AI 的对话记录（翻到对话最开始处，右键「另存为」网页 .html；或按 Ctrl+A 全选、Ctrl+C 复制到 Word）。\n\n最后，请把 两个部分 的对话整理合并成 一个 Word 文档 交给实验员。感谢配合！",
+      note:"两个情境的对话都要保存，最终合并为一个 Word 文档交给实验员。" });
   });
 
   return steps;
@@ -305,8 +316,11 @@ function render(){
   fill.style.width = (i/steps.length*100) + "%";
   ptext.textContent = `第 ${i+1} / ${steps.length} 步`;
   const isLink = s.type === "link";
+  const isSave = s.type === "save";
   const done = !!completed[i];
-  const nextHint = isLink ? "请先点「打开」查看本步内容，才能进入下一步" : "请先点「复制」，才能进入下一步";
+  const nextHint = isSave ? "请先点「我已保存对话」，才能进入下一步"
+                 : isLink ? "请先点「打开」查看本步内容，才能进入下一步"
+                 : "请先点「复制」，才能进入下一步";
   app.innerHTML = `
     <div class="card" id="card">
       <span class="phase-tag phase-${s.phase}"><span class="dot"></span>${s.label}</span>
@@ -315,8 +329,10 @@ function render(){
       <div class="content-box ${isLink?'link':''}">${escapeHtml(s.content)}</div>
       ${s.note ? `<div class="note">💡 ${escapeHtml(s.note)}</div>` : ``}
       <div class="btns">
-        <button class="btn-copy" id="copyBtn" onclick="copyNow()">📋 复制</button>
-        ${isLink ? `<button class="btn-open" onclick="openLink()">🔗 打开</button>` : ``}
+        ${isSave
+          ? `<button class="btn-ack ${done?'done':''}" id="ackBtn" onclick="ackNow()">${done?'✅ 已确认':'✅ 我已保存对话'}</button>`
+          : `<button class="btn-copy" id="copyBtn" onclick="copyNow()">📋 复制</button>
+             ${isLink ? `<button class="btn-open" onclick="openLink()">🔗 打开</button>` : ``}`}
         <button class="btn-next" id="nextBtn" onclick="go(1)" ${done?'':'disabled'}>下一步 →</button>
       </div>
       ${done ? `` : `<div class="lock-hint">🔒 ${nextHint}</div>`}
@@ -363,6 +379,9 @@ function copyNow(){
 }
 
 function openLink(){ unlockNext(); window.open(steps[i].content,'_blank'); }
+
+function ackNow(){ unlockNext(); const b=document.getElementById('ackBtn');
+  if(b){ b.textContent="✅ 已确认"; b.classList.add('done'); } }
 
 function jumpMenu(){
   const list = steps.map((s,idx)=>`${idx+1}. ${s.label} · ${s.kind}`).join("\n");
